@@ -1,10 +1,22 @@
 language: scala
+
+sudo: required
+
 scala:
-- 2.11.11
-script: sbt clean +test
-sudo: false
+   - 2.11.12
+   - 2.12.4
+
 jdk:
-- oraclejdk8
+   - oraclejdk8
+
+script:
+  - sbt clean +test
+
+sudo: false
+
+before_cache:
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -print -delete
+  - find $HOME/.sbt  -name "*.lock"               -print -delete
 services:
 - postgresql
 addons:
@@ -14,18 +26,17 @@ before_script:
 - psql akkapg -c "create extension hstore;" -U postgres
 - psql -c "create user akkapg with password 'akkapg';" -U postgres
 - psql -c "grant all privileges on database akkapg to akkapg;" -U postgres
+
 cache:
   directories:
-  - "$HOME/.ivy2"
-  - "$HOME/.sbt"
-notifications:
-  email:
-    recipients:
-    - peter.mortier@gmail.com
-    - karel@geovise.com
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot
 after_success:
 - '[[ $TRAVIS_BRANCH == "develop" ]] && { sbt +publish; };'
+
 env:
   global:
-  - SONATYPE_USERNAME=kmaesen
-  - secure: ZU+VxelX+z1nvPOJ+62hl4e6W8k3i2zjq/A1Sz1BSfgbjcTF94az+86YbiyCrpKYc6seUWGswneUOBSX6ib1PONFeLMlKwIUyRPXJIYuJxgYeF4uuJnGtSrzrpVxuFAh0e7Ju/p1A/EleKlfdtjdH4Lr9jFoHGKItcxMxVOQWk6NMvopevpD3+2asPY5dYv5rR5sCHT9fpCh0pvYVN9iQRl+0kzYBYUcC8En307USfx8rl7qHFaAiHe69g4JMBoBR2GmSbFfcSaq7/NCSz3qu/wpk7pNA9ieyChQaotrZxdlQLmO75Jo6mqw/8sCZIqw4OrWS7oNmMzZ1MPNsWEJ820vr56+S/ij0Vz8uns3xakxKky3bJ6Oeg8dFQe0Bj76MCN6y/V+aGQcqMcQmIovbskUyPC0KK62K9gMvwOm7zrrvT6xDOpsTSAVW4yZPGDGY6Jc5DJWT1833qgYJMYcAd+pZSnaE4gvINsjqSHieCIGjxtR+3xhqZ+xqyoDFQl3GejKpmVXbiGR+W2WE/GJRHNWQaC6nhg/Cy+zwObDl1B3TwBBwC0xi8FYfi8pUeNgqH5N35e3XWB9JiBRHWbfwnlcJOmquaduKhA6DMntB15EB/9mM2oLSRazvnkCtof45O9Zm2OTkpqbJ3I/jbaoOMKMWXmhLHsBBmvkxicPsao=
+    # encrypt with: travis encrypt BINTRAY_USER=...
+    - secure: "WXITvMAQmjJHQijqCkS+cZ9BLEH+B9n3IiGtP3bV8U+9UsR4kU7+mZyDAQDdI6l36rHDgPPWqy/PCxnXETKY0do2RqI70lk3bgqmPUy7V6BP+pweX103fBuztEuPBm124nnUrJj7enRGDe+kwSoXCCwkidw3RjrJy2yNJBLgOSu7HPDfOFqnzsHiA/C1aithTCG0V7e0l6Lvb8HzXRg91pTAJGJQIm3Mff4mACpThyL90hfde+Jb2Is1KnpXTMCoGWC65wxbh8rjCmPSFs+98XeceAFDJqXiVKx/AWJDVMv11NYxOGqBDjC2w6LgBSvI140xm5Y7LhgeM5nZNiUaximoxAbmHFrddVOyxZ9jlNe+OLxo3FQXaa6+6MtXifZDbL3ikz/Ztyt0AE79o1Ui/GFLs2pKc2g1WlkelMH5qLmXt00lKzn1f/NN3k18WaBhQlKPosrEH0mKWlfyrkPETHi7e2fCh9UrKhDZw3/SjdFGMLMZfQr3JJCSBxusfngBMVQZ1ZJ3Fpzn2HteL1XLrssPUk+S9s+fNALW0UuaUu7rnEyjFCSnDoraTpjQboZXbpWz5qI/pIa5xcSv53jblYlwvRJbgsjc2LO1k/mHrZfJ8jVoo9vL04V0ch8kCCATeqaocdg2Wlb3fj0j5/hVwrDYJffoVlaHo2lB99yO+ds="
+    # encrypt with: travis encrypt BINTRAY_PASS=...
+    - secure: "aeNhC4nBKc59aDRkjFrqlsQOJRCZvNHdYNOyd5gphPzS3w5Syi0zHq/AwnyZDRM1qCalbwMzc23shqLWheh/T+pIE1oKB9tabFf8aK86irT8rMGhbGaGoRyhAG4q0K2I5cu7CZBNrAhWCNqdCM6fOKYwDzILCIGdXUM8pXZZcJyVkva9YrNMGKUit46PfQfOcNr2hRc4+SKV8wNiI5fAMGLJedf89XXXe0BtzxK+aOUGeutmTF9ZYV/srrhOb04HGKMyvQeCRQcV7OmtmMQh9LrA46sQkPP4N7AiSryhigce7WeIcnW+5puaVI5YlGdbeEa6uOP5KqAzuQnrZidK/qfsZaEy6zf/Zjj3o5cqGKcMtfX7Uzby3EHzGJOtzo5U3kDNun7FEr4tibAWk5YEL7Z+Ve938eGINeLTsfGCwzEIDpJadXRbDgApFH+968b3qGhvpmv+YjQNgMZi9axYma66iTn8MRkcqnNFD+EIv8UE7sZYl5rTj4zkCunkE14D+7jFSEt7V/sQN7OtBufvyGt1hQrbLFHQ+6TWayTPAooCSZSFFKdo//OdHgQ4wkUNm1TwJnYtuHNw1YLMJjppwXlaZyLK/Ec9aE1IBNHRXRqIw+jmY443VkcfKBRUiL0PeNULkgO7imwlPlSItFiy82DB+jkoWAGZbVtkOhA2gZo="
