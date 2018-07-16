@@ -1,5 +1,11 @@
-db:
-  build: docker/app-postgres
-  hostname: db
-  ports:
-   - "5432:5432"
+version: '2.1'
+services:
+  db:
+    image: postgres:9.4.10
+    ports:
+     - "5432:5432"
+    environment:
+     - POSTGRES_USER=akkapg
+     - POSTGRES_PASSWORD=akkapg
+    volumes:
+     - ./postgres-init.sql:/docker-entrypoint-initdb.d/init.sql

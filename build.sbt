@@ -1,7 +1,11 @@
 import BuildSettings._
 import Dependencies._
+import sbt.{Credentials, Path, Resolver}
 
-organization := "be.wegenenverkeer"
+organization := "com.firstbird"
+credentials += Credentials(Path.userHome / ".sbt" / "credentials")
+resolvers += "Artibird" at "https://artifactory.firstbird.com/libs-release"
+resolvers += Resolver.bintrayRepo("firstbird", "maven")
 
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
 

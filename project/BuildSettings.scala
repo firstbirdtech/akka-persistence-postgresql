@@ -6,56 +6,19 @@ object BuildSettings {
   def commonSettings = Seq(
     parallelExecution in Test := false,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
-    resolvers ++= Seq(
-      "Local Maven" at Path.userHome.asFile.toURI.toURL + ".m2/repository",
-      Resolver.typesafeRepo("releases")
-    ),
-    updateOptions := updateOptions.value.withCachedResolution(true),
-    organization := "be.wegenenverkeer"
+    updateOptions := updateOptions.value.withCachedResolution(true)
   )
 
-  val publishingCredentials = (for {
-    username <- Option(System.getenv().get("SONATYPE_USERNAME"))
-    password <- Option(System.getenv().get("SONATYPE_PASSWORD"))
-  } yield
-    Seq(Credentials(
-      "Sonatype Nexus Repository Manager",
-      "oss.sonatype.org",
-      username,
-      password)
-    )).getOrElse(Seq())
-
-
-  val publishSettings = Seq(
+  lazy val publishSettings = Seq(
     publishMavenStyle := true,
-    pomIncludeRepository := { _ => false},
+    publishArtifact in Test := false,
     publishTo := {
-      val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
+        Some(
+          "Artifactory Realm" at "https://artifactory.firstbird.com/libs-snapshot-local;build.timestamp=" + new java.util.Date().getTime)
       else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    },
-    pomExtra := <url>https://github.com/WegenenVerkeer/akka-persistence-postgresql</url>
-      <licenses>
-        <license>
-          <name>MIT licencse</name>
-          <url>http://opensource.org/licenses/MIT</url>
-          <distribution>repo</distribution>
-        </license>
-      </licenses>
-      <scm>
-        <url>git@github.com:WegenenVerkeer/akka-persistence-postgresql.git</url>
-        <connection>scm:git:git@github.com:WegenenVerkeer/akka-persistence-postgresql.git</connection>
-      </scm>
-      <developers>
-        <developer>
-          <id>AWV</id>
-          <name>De ontwikkelaars van AWV</name>
-          <url>http://www.wegenenverkeer.be</url>
-        </developer>
-      </developers>,
-    credentials ++= publishingCredentials
+        Some("Artifactory Realm" at "https://artifactory.firstbird.com/libs-release-local")
+    }
   )
 
 }
