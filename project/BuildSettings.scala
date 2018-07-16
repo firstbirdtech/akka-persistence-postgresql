@@ -4,7 +4,7 @@ import bintray.BintrayPlugin.autoImport._
 object BuildSettings {
 
   val commonSettings = Seq(
-    organization := "firstbird",
+    organization := "com.firstbird",
     parallelExecution in Test := false,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
     updateOptions := updateOptions.value.withCachedResolution(true),
