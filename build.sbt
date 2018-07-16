@@ -1,12 +1,9 @@
+import sbt._
+import sbt.Keys._
 import BuildSettings._
 import Dependencies._
-import sbt.{Credentials, Path, Resolver}
 
 organization := "com.firstbird"
-credentials += Credentials(Path.userHome / ".sbt" / "credentials")
-resolvers += "Artibird" at "https://artifactory.firstbird.com/libs-release"
-resolvers += Resolver.bintrayRepo("firstbird", "maven")
-
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
 
 scalacOptions in ThisBuild := {
@@ -37,7 +34,7 @@ lazy val akkaPersistencePgModule = {
   Project(
     id = "akka-persistence-pg",
     base = file("modules/akka-persistence-pg"),
-    settings = Defaults.coreDefaultSettings ++ commonSettings ++ publishSettings
+    settings = Defaults.coreDefaultSettings ++ commonSettings ++ bintraySettings
   )
     .configs(config("it") extend Test)
     .settings(Defaults.itSettings: _*)
@@ -69,6 +66,6 @@ lazy val benchmarkModule = {
 val main = Project(
   id = "akka-persistence-postgresql",
   base = file("."),
-  settings = Defaults.coreDefaultSettings ++ commonSettings ++
+  settings = Defaults.coreDefaultSettings ++ commonSettings ++ bintraySettings ++
     Seq(publishLocal := {}, publish := {}, packagedArtifacts := Map.empty, crossScalaVersions := Seq("2.11.11", "2.12.5"))
 ).aggregate(akkaPersistencePgModule, benchmarkModule)

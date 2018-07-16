@@ -1,1 +1,0 @@
-sonatypeProfileName := "be.wegenenverkeer"

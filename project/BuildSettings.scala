@@ -1,24 +1,20 @@
-import sbt.Keys._
-import sbt._
-
+import sbt.Keys.{licenses, _}
+import sbt.{Def, _}
+import bintray.BintrayPlugin.autoImport._
 object BuildSettings {
 
-  def commonSettings = Seq(
+  val commonSettings = Seq(
+    organization := "firstbird",
     parallelExecution in Test := false,
     concurrentRestrictions in Global += Tags.limit(Tags.Test, 1),
-    updateOptions := updateOptions.value.withCachedResolution(true)
+    updateOptions := updateOptions.value.withCachedResolution(true),
+      licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")))
   )
 
-  lazy val publishSettings = Seq(
-    publishMavenStyle := true,
-    publishArtifact in Test := false,
-    publishTo := {
-      if (isSnapshot.value)
-        Some(
-          "Artifactory Realm" at "https://artifactory.firstbird.com/libs-snapshot-local;build.timestamp=" + new java.util.Date().getTime)
-      else
-        Some("Artifactory Realm" at "https://artifactory.firstbird.com/libs-release-local")
-    }
+  val bintraySettings: Seq[Def.Setting[_]] = Seq(
+    bintrayOrganization := Some("firstbird"),
+    bintrayRepository := "maven",
+    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
   )
 
 }
