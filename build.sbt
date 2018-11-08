@@ -3,7 +3,6 @@ import sbt.Keys._
 import BuildSettings._
 import Dependencies._
 
-organization := "com.firstbird"
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
 
 scalacOptions in ThisBuild := {
@@ -40,7 +39,7 @@ lazy val akkaPersistencePgModule = {
     .configs(It)
     .settings(Defaults.coreDefaultSettings ++ commonSettings ++ bintraySettings)
     .settings(Defaults.itSettings: _*)
-    .settings(crossScalaVersions := (crossScalaVersions in ThisBuild).value)
+    .settings(crossScalaVersions := Seq("2.11.12", "2.12.7"))
     .settings(libraryDependencies ++= mainDeps ++ mainTestDependencies)
 
 }
@@ -59,8 +58,7 @@ lazy val benchmarkModule = {
     .enablePlugins(GatlingPlugin)
     .configs(GatlingIt)
     .settings(Defaults.coreDefaultSettings ++ commonSettings ++ Seq(publishLocal := {}, publish := {}, packagedArtifacts := Map.empty))
-    .settings(crossScalaVersions := (crossScalaVersions in ThisBuild).value.filter(_ startsWith "2.12"))
-    .settings(scalaVersion := crossScalaVersions.value.last)
+    .settings(scalaVersion := "2.12.7")
 
 
 }
