@@ -59,9 +59,9 @@ lazy val akkaPersistencePgModule = {
     id = "akka-persistence-pg",
     base = file("modules/akka-persistence-pg")
   ).configs(It)
-    .settings(Defaults.coreDefaultSettings ++ commonSettings ++ publishSettings)
+    .settings(Defaults.coreDefaultSettings ++ commonSettings ++ bintraySettings)
     .settings(Defaults.itSettings: _*)
-    .settings(crossScalaVersions := Seq("2.11.12", "2.12.7"))
+    .settings(crossScalaVersions := (crossScalaVersions in ThisBuild).value)
     .settings(libraryDependencies ++= mainDeps ++ mainTestDependencies)
 
 }

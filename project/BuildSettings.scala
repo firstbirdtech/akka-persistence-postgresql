@@ -1,6 +1,7 @@
+import bintray.BintrayPlugin.autoImport._
+import org.scalafmt.sbt.ScalafmtPlugin.autoImport._
 import sbt.Keys.{licenses, _}
 import sbt.{Def, _}
-import bintray.BintrayPlugin.autoImport._
 object BuildSettings {
 
   val commonSettings = Seq(
